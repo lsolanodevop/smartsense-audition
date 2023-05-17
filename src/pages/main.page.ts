@@ -1,6 +1,7 @@
 import {expect, Locator, Page} from "@playwright/test";
 import Wrapper from "../base/Wrapper";
 import { areSetsEqual } from '../utils/utils';
+import Parking from "../utils/parking";
 
 export default class MainPage extends Wrapper {
     readonly parkingDropdown: Locator;
@@ -28,7 +29,6 @@ export default class MainPage extends Wrapper {
         this.leavingTime = page.locator('#LeavingTime');
         this.leavingAM = page.getByRole('radio').nth(2);
         this.leavingPM = page.getByRole('radio').nth(3);
-        this.parkingCost = page.locator('td.SubHead');
         this.calculateButton = page.getByRole('button', { name: 'Calculate' });
     }
     //SMAR-1
@@ -62,4 +62,39 @@ export default class MainPage extends Wrapper {
         expect(actualSelectedText, `The selected option should contain ${value}`).toContain(expectedValue);
     }
 
+    async insertData(ticket: Parking) {
+        const { entryDate, entryTime, entryAMPM, leavingDate, leavingTime, leavingAMPM } = ticket;
+    
+        await this.entryDate.fill(entryDate ?? '');
+        await this.entryTime.fill(entryTime ?? '');
+    
+        switch (entryAMPM) {
+            case 'AM':
+                await this.entryAM.check();
+                break;
+            case 'PM':
+                await this.entryPM.check();
+                break;
+        }
+    
+        await this.leavingDate.fill(leavingDate ?? '');
+        await this.leavingTime.fill(leavingTime ?? '');
+    
+        switch (leavingAMPM) {
+            case 'AM':
+                await this.leavingAM.check();
+                break;
+            case 'PM':
+                await this.leavingPM.check();
+                break;
+        }
+        await this.calculateButton.click();
+    }
+    
+    //SMAR-7 / SMAR-14 TO SMAR-33 It is not optimal but it kinda works
+    async checkValidCost(priceToPay){
+        const parking = await this.page.getByText(priceToPay);
+        const amountToPayTimeSpent = await parking.textContent();
+        expect(amountToPayTimeSpent,'The amount should be the same').toContain(priceToPay);
+    }
 }

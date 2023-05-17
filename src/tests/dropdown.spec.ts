@@ -3,7 +3,6 @@ import test from '../utils/fixtures';
 test.describe('Verify dropdown values', () => {
     test.beforeEach(async ({page, mainPage}) => {
         await page.goto('https://www.shino.de/parkcalc/index.php');
-        
     });
 
     test('SMAR-1: Verify all parking lot options are displayed',async ({

@@ -14,7 +14,7 @@ export default defineConfig({
   timeout: 5000,
   reporter: "html",
   use: {
-    headless: false,
+    headless: true,
     //screenshot: "on",
     //video: "on"
   }
