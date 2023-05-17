@@ -1,0 +1,23 @@
+{
+  "name": "smartsense-audition",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "launch": "npx playwright test --ui"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lsolanodevop/smartsense-audition.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lsolanodevop/smartsense-audition/issues"
+  },
+  "homepage": "https://github.com/lsolanodevop/smartsense-audition#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.33.0"
+  }
+}
