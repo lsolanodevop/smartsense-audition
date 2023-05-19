@@ -30,6 +30,7 @@ export default class MainPage extends Wrapper {
         this.leavingAM = page.getByRole('radio').nth(2);
         this.leavingPM = page.getByRole('radio').nth(3);
         this.calculateButton = page.getByRole('button', { name: 'Calculate' });
+        this.parkingCost = page.getByText('ERROR! Your Leaving Date Or Time Is Before Your Starting Date or Time');
     }
     //SMAR-1
     async verifyAllDropdownValues(){
@@ -76,10 +77,11 @@ export default class MainPage extends Wrapper {
                 await this.entryPM.check();
                 break;
         }
-    
-        await this.leavingDate.fill(leavingDate ?? '');
-        await this.leavingTime.fill(leavingTime ?? '');
-    
+        if (leavingTime != null) {
+            await this.leavingDate.fill(leavingDate ?? '');
+            await this.leavingTime.fill(leavingTime ?? '');
+        }
+        
         switch (leavingAMPM) {
             case 'AM':
                 await this.leavingAM.check();
@@ -96,5 +98,33 @@ export default class MainPage extends Wrapper {
         const parking = await this.page.getByText(priceToPay);
         const amountToPayTimeSpent = await parking.textContent();
         expect(amountToPayTimeSpent,'The amount should be the same').toContain(priceToPay);
+    }
+    //SMAR-8 - SMAR-13
+    async checkErrorMessage(condition:string) {
+        let displayMessage;
+        if(condition === 'Empty')
+             displayMessage = await this.page.getByRole('cell', { name: 'ERROR! Enter A Correctly Formatted Date' }).textContent();
+            else
+            displayMessage = await this.parkingCost.textContent();
+        switch(condition) {
+            case 'Empty':
+            expect(displayMessage,'The message should be the same').toContain('ERROR! Enter A Correctly Formatted Date');
+                break;
+            case 'Invalid':
+            expect(displayMessage,'The message should be the same').toContain('ERROR! Your Dates are invalid');
+                break;
+            case 'Non-Existent':
+            expect(displayMessage,'The message should be the same').toContain('ERROR! Your Dates does not exists');
+                break;
+            case 'Negative':
+            expect(displayMessage,'The message should be the same').toContain('ERROR! Enter A Correctly Formatted Date');
+                break;
+            case 'Mismatch':
+            expect(displayMessage,'The message should be the same').toContain('ERROR! Your Leaving Date Or Time Is Before Your Starting Date or Time');
+                break;
+            case 'Alphabetical':
+                expect(displayMessage,'The message should be the same').toContain('ERROR! Enter A Correctly Formatted Date');
+                break;
+        }
     }
 }
